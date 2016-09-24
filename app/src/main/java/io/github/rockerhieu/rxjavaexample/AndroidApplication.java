@@ -34,6 +34,7 @@ import io.realm.RealmConfiguration;
  * Created by rockerhieu on 9/24/16.
  */
 public class AndroidApplication extends Application {
+  private static final String API_HOST = "http://192.168.1.100:3000";
   private DataComponent dataComponent;
 
   @Override public void onCreate() {
@@ -45,7 +46,7 @@ public class AndroidApplication extends Application {
         // list of modules that are part of this component need to be created here too
         .appModule(new AppModule(
             this)) // This also corresponds to the name of your module: %component_name%Module
-        .dataModule(new DataModule("http://192.168.1.100:3000")).build();
+        .dataModule(new DataModule(API_HOST)).build();
   }
 
   public DataComponent getDataComponent() {
