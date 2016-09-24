@@ -20,26 +20,36 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package io.github.rockerhieu.rxjavaexample;
+package io.github.rockerhieu.rxjavaexample.data.memory;
 
-import android.content.Context;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.runner.AndroidJUnit4;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import static org.junit.Assert.*;
+import android.util.LruCache;
+import io.github.rockerhieu.rxjavaexample.data.UserRepository;
+import io.github.rockerhieu.rxjavaexample.data.entity.User;
+import java.util.List;
+import rx.Observable;
 
 /**
- * Instrumentation test, which will execute on an Android device.
- *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * Created by rockerhieu on 9/24/16.
  */
-@RunWith(AndroidJUnit4.class) public class ExampleInstrumentedTest {
-  @Test public void useAppContext() throws Exception {
-    // Context of the app under test.
-    Context appContext = InstrumentationRegistry.getTargetContext();
+public class UserMemoryRepository implements UserRepository {
+  LruCache<Integer, User> cache;
 
-    assertEquals("io.github.rockerhieu.rxjavaexample", appContext.getPackageName());
+  public UserMemoryRepository(LruCache<Integer, User> cache) {
+    this.cache = cache;
+  }
+
+  @Override public Observable<List<User>> getUsers() {
+    return Observable.just(cache)
+        .map(cache -> cache.snapshot())
+        .map(map -> map.values())
+        .flatMap(collection -> Observable.from(collection))
+        .filter(user -> user != null)
+        .sorted((user1, user2) -> (user1.getId() < user2.getId()) ? -1
+            : ((user1.getId() == user2.getId()) ? 0 : 1))
+        .toList();
+  }
+
+  @Override public Observable<User> getUser(int userId) {
+    return Observable.just(cache).map(cache -> cache.get(userId)).filter(user -> user != null);
   }
 }

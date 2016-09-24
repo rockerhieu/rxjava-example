@@ -20,26 +20,57 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package io.github.rockerhieu.rxjavaexample;
+package io.github.rockerhieu.rxjavaexample.data.entity;
 
-import android.content.Context;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.runner.AndroidJUnit4;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import static org.junit.Assert.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
- * Instrumentation test, which will execute on an Android device.
- *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * Created by rockerhieu on 9/24/16.
  */
-@RunWith(AndroidJUnit4.class) public class ExampleInstrumentedTest {
-  @Test public void useAppContext() throws Exception {
-    // Context of the app under test.
-    Context appContext = InstrumentationRegistry.getTargetContext();
+@JsonIgnoreProperties(ignoreUnknown = true) public class User extends RealmObject {
+  @PrimaryKey @JsonProperty(Fields.ID) private int id;
 
-    assertEquals("io.github.rockerhieu.rxjavaexample", appContext.getPackageName());
+  @JsonProperty(Fields.FULLNAME) private String fullName;
+
+  @JsonProperty(Fields.FOLLOWERS) private int followers;
+
+  public User() {
+  }
+
+  public int getId() {
+    return id;
+  }
+
+  public void setId(int id) {
+    this.id = id;
+  }
+
+  public String getFullName() {
+    return fullName;
+  }
+
+  public void setFullName(String fullName) {
+    this.fullName = fullName;
+  }
+
+  public int getFollowers() {
+    return followers;
+  }
+
+  public void setFollowers(int followers) {
+    this.followers = followers;
+  }
+
+  @Override public String toString() {
+    return fullName;
+  }
+
+  public interface Fields {
+    String ID = "id";
+    String FULLNAME = "fullName";
+    String FOLLOWERS = "followers";
   }
 }

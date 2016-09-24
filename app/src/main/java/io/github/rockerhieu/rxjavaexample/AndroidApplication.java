@@ -22,24 +22,33 @@
 
 package io.github.rockerhieu.rxjavaexample;
 
-import android.content.Context;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.runner.AndroidJUnit4;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import static org.junit.Assert.*;
+import android.app.Application;
+import io.github.rockerhieu.rxjavaexample.di.AppModule;
+import io.github.rockerhieu.rxjavaexample.di.DaggerDataComponent;
+import io.github.rockerhieu.rxjavaexample.di.DataComponent;
+import io.github.rockerhieu.rxjavaexample.di.DataModule;
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 
 /**
- * Instrumentation test, which will execute on an Android device.
- *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * Created by rockerhieu on 9/24/16.
  */
-@RunWith(AndroidJUnit4.class) public class ExampleInstrumentedTest {
-  @Test public void useAppContext() throws Exception {
-    // Context of the app under test.
-    Context appContext = InstrumentationRegistry.getTargetContext();
+public class AndroidApplication extends Application {
+  private DataComponent dataComponent;
 
-    assertEquals("io.github.rockerhieu.rxjavaexample", appContext.getPackageName());
+  @Override public void onCreate() {
+    super.onCreate();
+    RealmConfiguration realmConfiguration = new RealmConfiguration.Builder(this).build();
+    Realm.setDefaultConfiguration(realmConfiguration);
+
+    dataComponent = DaggerDataComponent.builder()
+        // list of modules that are part of this component need to be created here too
+        .appModule(new AppModule(
+            this)) // This also corresponds to the name of your module: %component_name%Module
+        .dataModule(new DataModule("http://192.168.1.100:3000")).build();
+  }
+
+  public DataComponent getDataComponent() {
+    return dataComponent;
   }
 }

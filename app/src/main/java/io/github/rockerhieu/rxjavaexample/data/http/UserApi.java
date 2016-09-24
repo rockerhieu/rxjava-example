@@ -20,26 +20,19 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package io.github.rockerhieu.rxjavaexample;
+package io.github.rockerhieu.rxjavaexample.data.http;
 
-import android.content.Context;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.runner.AndroidJUnit4;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import static org.junit.Assert.*;
+import io.github.rockerhieu.rxjavaexample.data.entity.User;
+import java.util.List;
+import retrofit2.http.GET;
+import retrofit2.http.Path;
+import rx.Observable;
 
 /**
- * Instrumentation test, which will execute on an Android device.
- *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * Created by rockerhieu on 9/24/16.
  */
-@RunWith(AndroidJUnit4.class) public class ExampleInstrumentedTest {
-  @Test public void useAppContext() throws Exception {
-    // Context of the app under test.
-    Context appContext = InstrumentationRegistry.getTargetContext();
+public interface UserApi {
+  @GET("/db") Observable<List<User>> getUsers();
 
-    assertEquals("io.github.rockerhieu.rxjavaexample", appContext.getPackageName());
-  }
+  @GET("/{user_id}") Observable<User> getUser(@Path("user_id") int userId);
 }

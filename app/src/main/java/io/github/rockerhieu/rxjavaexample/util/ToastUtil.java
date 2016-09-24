@@ -20,26 +20,20 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package io.github.rockerhieu.rxjavaexample;
+package io.github.rockerhieu.rxjavaexample.util;
 
 import android.content.Context;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.runner.AndroidJUnit4;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import static org.junit.Assert.*;
+import android.widget.Toast;
 
 /**
- * Instrumentation test, which will execute on an Android device.
- *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * Created by rockerhieu on 9/24/16.
  */
-@RunWith(AndroidJUnit4.class) public class ExampleInstrumentedTest {
-  @Test public void useAppContext() throws Exception {
-    // Context of the app under test.
-    Context appContext = InstrumentationRegistry.getTargetContext();
 
-    assertEquals("io.github.rockerhieu.rxjavaexample", appContext.getPackageName());
+public final class ToastUtil {
+  private ToastUtil() {
+  }
+
+  public static void shortToast(Context context, String text) {
+    Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
   }
 }

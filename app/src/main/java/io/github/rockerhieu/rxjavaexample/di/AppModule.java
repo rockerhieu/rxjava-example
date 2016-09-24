@@ -20,26 +20,23 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package io.github.rockerhieu.rxjavaexample;
+package io.github.rockerhieu.rxjavaexample.di;
 
-import android.content.Context;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.runner.AndroidJUnit4;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import android.app.Application;
+import dagger.Module;
+import dagger.Provides;
+import io.github.rockerhieu.rxjavaexample.AndroidApplication;
+import javax.inject.Singleton;
 
-import static org.junit.Assert.*;
+@Module public class AppModule {
 
-/**
- * Instrumentation test, which will execute on an Android device.
- *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
- */
-@RunWith(AndroidJUnit4.class) public class ExampleInstrumentedTest {
-  @Test public void useAppContext() throws Exception {
-    // Context of the app under test.
-    Context appContext = InstrumentationRegistry.getTargetContext();
+  Application application;
 
-    assertEquals("io.github.rockerhieu.rxjavaexample", appContext.getPackageName());
+  public AppModule(Application application) {
+    this.application = application;
+  }
+
+  @Provides @Singleton Application providesApplication() {
+    return application;
   }
 }
