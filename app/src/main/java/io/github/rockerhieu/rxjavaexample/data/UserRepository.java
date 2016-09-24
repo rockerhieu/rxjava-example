@@ -33,4 +33,6 @@ public interface UserRepository {
   Observable<List<User>> getUsers();
 
   Observable<User> getUser(int userId);
+
+  Observable<User> saveUser(User user);
 }

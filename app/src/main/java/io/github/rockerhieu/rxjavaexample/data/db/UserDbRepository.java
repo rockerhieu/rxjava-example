@@ -22,6 +22,7 @@
 
 package io.github.rockerhieu.rxjavaexample.data.db;
 
+import android.util.Log;
 import io.github.rockerhieu.rxjavaexample.data.UserRepository;
 import io.github.rockerhieu.rxjavaexample.data.entity.User;
 import io.realm.Realm;
@@ -32,6 +33,7 @@ import rx.Observable;
  * Created by rockerhieu on 9/24/16.
  */
 public class UserDbRepository implements UserRepository {
+  private static final String TAG = "UserDbRepository";
   Realm realm;
 
   public UserDbRepository() {
@@ -39,13 +41,32 @@ public class UserDbRepository implements UserRepository {
   }
 
   @Override public Observable<List<User>> getUsers() {
+    Log.d(TAG, "getUsers - start");
     return realm.where(User.class)
         .findAllAsync()
         .asObservable()
-        .map(result -> realm.copyFromRealm(result));
+        .map(result -> realm.copyFromRealm(result))
+        .doOnEach(o -> Log.d(TAG, "getUsers - onNext"))
+        .doOnError(e -> Log.d(TAG, "getUsers - onError"))
+        .doOnCompleted(() -> Log.d(TAG, "getUsers - onComplete"));
   }
 
   @Override public Observable<User> getUser(int userId) {
-    return realm.where(User.class).equalTo(User.Fields.ID, userId).findFirstAsync().asObservable();
+    Log.d(TAG, "getUser - start");
+    Observable<User> observable =
+        realm.where(User.class).equalTo(User.Fields.ID, userId).findFirstAsync().asObservable();
+    return observable.doOnEach(o -> Log.d(TAG, "getUser - onNext"))
+        .doOnError(e -> Log.d(TAG, "getUser - onError"))
+        .doOnCompleted(() -> Log.d(TAG, "getUser - onComplete"));
+  }
+
+  @Override public Observable<User> saveUser(User user) {
+    Log.d(TAG, "saveUser " + user.getId());
+    return Observable.just(user)
+        .filter(u -> u != null)
+        .doOnNext(u -> realm.insertOrUpdate(u))
+        .doOnEach(o -> Log.d(TAG, "saveUser " + user.getId()))
+        .doOnError(e -> Log.d(TAG, "saveUser " + user.getId()))
+        .doOnCompleted(() -> Log.d(TAG, "saveUser " + user.getId()));
   }
 }

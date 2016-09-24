@@ -86,7 +86,7 @@ dependencies {
   apt 'com.jakewharton:butterknife-compiler:8.4.0'
 
   compile 'com.squareup.okhttp3:okhttp:3.4.1'
-
+  compile 'com.squareup.okhttp3:logging-interceptor:3.4.1'
   compile 'com.squareup.phrase:phrase:1.1.0'
 
   apt 'com.google.dagger:dagger-compiler:2.5'

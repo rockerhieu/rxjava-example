@@ -46,10 +46,21 @@ import rx.Observable;
   }
 
   @Override public Observable<List<User>> getUsers() {
-    return restApi.getUsers();
+    return Observable.merge(memoryApi.getUsers(), restApi.getUsers())
+        .filter(list -> !list.isEmpty())
+        .doOnNext(list -> {
+          for (User user : list) memoryApi.saveUser(user);
+        })
+        .first();
   }
 
   @Override public Observable<User> getUser(int userId) {
-    return restApi.getUser(userId);
+    return Observable.merge(
+        restApi.getUser(userId).doOnNext(user -> memoryApi.saveUser(user)),
+        memoryApi.getUser(userId)).first();
+  }
+
+  @Override public Observable<User> saveUser(User user) {
+    throw new UnsupportedOperationException();
   }
 }

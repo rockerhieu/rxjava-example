@@ -40,6 +40,12 @@ import io.realm.annotations.PrimaryKey;
   public User() {
   }
 
+  public User(int id, String fullName, int followers) {
+    this.id = id;
+    this.fullName = fullName;
+    this.followers = followers;
+  }
+
   public int getId() {
     return id;
   }

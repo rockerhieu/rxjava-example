@@ -22,6 +22,7 @@
 
 package io.github.rockerhieu.rxjavaexample.data.memory;
 
+import android.util.Log;
 import android.util.LruCache;
 import io.github.rockerhieu.rxjavaexample.data.UserRepository;
 import io.github.rockerhieu.rxjavaexample.data.entity.User;
@@ -32,6 +33,7 @@ import rx.Observable;
  * Created by rockerhieu on 9/24/16.
  */
 public class UserMemoryRepository implements UserRepository {
+  static final String TAG = "UserMemoryRepository";
   LruCache<Integer, User> cache;
 
   public UserMemoryRepository(LruCache<Integer, User> cache) {
@@ -39,6 +41,7 @@ public class UserMemoryRepository implements UserRepository {
   }
 
   @Override public Observable<List<User>> getUsers() {
+    Log.d(TAG, "getUsers - start");
     return Observable.just(cache)
         .map(cache -> cache.snapshot())
         .map(map -> map.values())
@@ -46,10 +49,23 @@ public class UserMemoryRepository implements UserRepository {
         .filter(user -> user != null)
         .sorted((user1, user2) -> (user1.getId() < user2.getId()) ? -1
             : ((user1.getId() == user2.getId()) ? 0 : 1))
-        .toList();
+        .toList()
+        .doOnEach(o -> Log.d(TAG, "getUsers - onNext"))
+        .doOnError(e -> Log.d(TAG, "getUsers - onError"))
+        .doOnCompleted(() -> Log.d(TAG, "getUsers - onComplete"));
   }
 
   @Override public Observable<User> getUser(int userId) {
-    return Observable.just(cache).map(cache -> cache.get(userId)).filter(user -> user != null);
+    Log.d(TAG, "getUser - start");
+    return Observable.just(cache)
+        .map(cache -> cache.get(userId))
+        .filter(user -> user != null)
+        .doOnEach(o -> Log.d(TAG, "getUser - onNext"))
+        .doOnError(e -> Log.d(TAG, "getUser - onError"))
+        .doOnCompleted(() -> Log.d(TAG, "getUser - onComplete"));
+  }
+
+  @Override public Observable<User> saveUser(User user) {
+    return Observable.just(user).filter(u -> u != null).doOnNext(u -> cache.put(u.getId(), u));
   }
 }

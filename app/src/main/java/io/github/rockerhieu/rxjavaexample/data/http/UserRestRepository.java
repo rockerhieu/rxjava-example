@@ -22,6 +22,7 @@
 
 package io.github.rockerhieu.rxjavaexample.data.http;
 
+import android.util.Log;
 import io.github.rockerhieu.rxjavaexample.data.UserRepository;
 import io.github.rockerhieu.rxjavaexample.data.entity.User;
 import java.util.List;
@@ -31,6 +32,7 @@ import rx.Observable;
  * Created by rockerhieu on 9/24/16.
  */
 public class UserRestRepository implements UserRepository {
+  private static final String TAG = "UserRestRepository";
   private UserApi userApi;
 
   public UserRestRepository(UserApi userApi) {
@@ -38,10 +40,29 @@ public class UserRestRepository implements UserRepository {
   }
 
   @Override public Observable<List<User>> getUsers() {
-    return userApi.getUsers();
+    Log.d(TAG, "getUsers - start");
+    return userApi.getUsers()
+        .map(list -> {
+          try {
+            Thread.sleep(3000);
+          } catch (InterruptedException e) {
+          }
+          return list;
+        })
+        .doOnEach(o -> Log.d(TAG, "getUsers - onNext"))
+        .doOnError(e -> Log.d(TAG, "getUsers - onError"))
+        .doOnCompleted(() -> Log.d(TAG, "getUsers - onComplete"));
   }
 
   @Override public Observable<User> getUser(int userId) {
-    return userApi.getUser(userId);
+    Log.d(TAG, "getUser - start");
+    return userApi.getUser(userId)
+        .doOnEach(o -> Log.d(TAG, "getUser - onNext"))
+        .doOnError(e -> Log.d(TAG, "getUser - onError"))
+        .doOnCompleted(() -> Log.d(TAG, "getUser - onComplete"));
+  }
+
+  @Override public Observable<User> saveUser(User user) {
+    throw new UnsupportedOperationException();
   }
 }
